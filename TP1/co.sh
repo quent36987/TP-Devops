@@ -20,5 +20,7 @@ sudo docker exec -it "$RUNNER_NAME" gitlab-runner register \
   --docker-network-mode "gitlab-network" \
   --token "$REGISTER_TOKEN" \
   --executor "docker" \
-  --docker-image alpine:latest \
-  --description "docker-runner"
+  --docker-image "docker:24.0.5" \
+  --docker-privileged \
+  --description "docker-runner" \
+  --docker-volumes "/certs/client"
