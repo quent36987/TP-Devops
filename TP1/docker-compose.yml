@@ -3,28 +3,16 @@ services:
   web:
     image: 'gitlab/gitlab-ce:latest'
     restart: always
-    # hostname: 'dps.epita.local'
+    hostname: 'gitlab.exemple'
     container_name: gitlab-ce
     ports:
-      - '8080:80'
-      - '8443:443'
-      - '2222:22'
+      - '80:80'
+      - '443:443'
+      - '22:22'
     volumes:
       - gitlab_config:/etc/gitlab
       - gitlab_logs:/var/log/gitlab
       - gitlab_data:/var/opt/gitlab
-    networks:
-      - gitlab
-  gitlab-runner:
-    deploy:
-      replicas: 3
-    privileged: true
-    image: gitlab/gitlab-runner:latest
-    #restart: always
-    depends_on:
-      - web
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - gitlab
 
