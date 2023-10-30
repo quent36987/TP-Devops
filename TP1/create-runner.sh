@@ -5,7 +5,7 @@ RUNNER_NAME="gitlab-runner-$1"
 
 echo "Creating runner $RUNNER_NAME"
 
-DOCKER=$(docker run --rm -d --name "$RUNNER_NAME" --network gitlab-network \
+DOCKER=$(docker run -d --name "$RUNNER_NAME" --network gitlab-network \
   -v /var/run/docker.sock:/var/run/docker.sock \
   gitlab/gitlab-runner:latest)
 
