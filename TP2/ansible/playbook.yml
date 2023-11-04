@@ -1,0 +1,14 @@
+- hosts: localhost
+  become: yes
+  vars:
+    gitlab_url: "http://gitlab.exemple"
+    runner_name: "gitlab-runner-1"
+    runner_image: "gitlab/gitlab-runner:latest"
+    runner_network: "gitlab-network"
+    runner_executor: "docker"
+    docker_image: "docker:24.0.5"
+    registration_token: "{{ lookup('file', 'path_to_your_token_file') }}"
+  vars_files:
+    - ./passwords/secrets.yml
+  roles:
+    - runner

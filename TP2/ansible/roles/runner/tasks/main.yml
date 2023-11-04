@@ -1,0 +1,53 @@
+---
+- name: Création du GitLab Runner
+  community.docker.docker_container:
+    name: "{{ runner_name }}"
+    image: "{{ runner_image }}"
+    state: started
+    restart_policy: always
+    networks:
+      - name: "{{ runner_network }}"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    detach: yes
+
+- name: Récupération du token d'enregistrement du runner
+  uri:
+    url: "{{ gitlab_url }}/api/v4/user/runners"
+    method: POST
+    body_format: json
+    body:
+      runner_type: "instance_type"
+      description: "{{ runner_name }}"
+      tag_list: "docker,another_tag"
+    headers:
+      PRIVATE-TOKEN: "{{ gitlab_api_token }}"
+    status_code: 201
+    return_content: yes
+  register: registration_response
+
+- name: Enregistrement du GitLab Runner
+  community.docker.docker_container_exec:
+    container: "{{ runner_name }}"
+    command: >
+      gitlab-runner register 
+      --non-interactive 
+      --url "{{ gitlab_url }}" 
+      --docker-network-mode "gitlab-network"
+      --token "{{ registration_response.json.token }}" 
+      --executor "{{ runner_executor }}" 
+      --docker-image "{{ docker_image }}" 
+      --description "{{ runner_name }}" 
+      --docker-privileged 
+      --docker-volumes "/certs/client"
+  when: registration_response.json.token is defined
+
+#- name: Vérification de l'enregistrement du Runner
+#  community.docker.docker_container_exec:
+#    container: "{{ runner_name }}"
+#    command: gitlab-runner verify
+#  register: verify_runner
+#
+#- name: Affichage de l'état de vérification
+#  debug:
+#    var: verify_runner.stdout_lines

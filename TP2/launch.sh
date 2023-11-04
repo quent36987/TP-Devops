@@ -2,5 +2,4 @@
 
 docker build -t ansible .
 
-docker run -d --name ansible  \
-  -v /var/run/docker.sock:/var/run/docker.sock
+docker run --network gitlab-network -v /var/run/docker.sock:/var/run/docker.sock ansible
