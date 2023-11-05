@@ -28,9 +28,12 @@ RUN ansible-galaxy collection install community.docker
 
 # Copier les playbooks Ansible dans le conteneur
 COPY ansible/ /ansible/
+COPY .vault_pass.txt /ansible/
 
 # Définir le répertoire de travail
 WORKDIR /ansible
 
+RUN cat .vault_pass.txt > pass
+
 # Exécuter le playbook Ansible en utilisant l'inventaire par défaut
-CMD ["ansible-playbook", "-i", "inventory", "playbook.yml", "--vault-password-file", "./passwords/vault.txt"]
+CMD ["ansible-playbook", "-i", "inventory", "playbook.yml", "--vault-password-file", "pass"]
