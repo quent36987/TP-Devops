@@ -1,25 +1,15 @@
-version: '3'
 services:
-  web:
-    image: 'gitlab/gitlab-ce:latest'
-    restart: always
-    hostname: 'gitlab.exemple'
-    container_name: gitlab-ce
-    ports:
-      - '80:80'
-      - '443:443'
-      - '22:22'
+  ansible:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    privileged: true
     volumes:
-      - gitlab_config:/etc/gitlab
-      - gitlab_logs:/var/log/gitlab
-      - gitlab_data:/var/opt/gitlab
+      - ./ansible:/ansible
+      - /var/run/docker.sock:/var/run/docker.sock
     networks:
-      - gitlab
+        - gitlab-network
 
 networks:
-  gitlab:
-
-volumes:
-  gitlab_config:
-  gitlab_logs:
-  gitlab_data:
+    gitlab-network:
+      external: true

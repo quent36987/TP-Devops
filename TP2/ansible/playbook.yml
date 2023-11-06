@@ -1,7 +1,5 @@
-- hosts: localhost
-  become: yes
-  vars_files:
-    - ./passwords/secrets.yml
-    - ./passwords/env.yml
+---
+- name: "Install gitlab-runner"
+  hosts: localhost
   roles:
     - runner

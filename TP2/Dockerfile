@@ -24,16 +24,20 @@ RUN curl -fsSL https://get.docker.com -o get-docker.sh && \
     rm get-docker.sh
 
 # Installer les collections Ansible nécessaires
-RUN ansible-galaxy collection install community.docker
+# RUN ansible-galaxy collection install community.docker
 
 # Copier les playbooks Ansible dans le conteneur
-COPY ansible/ /ansible/
-COPY .vault_pass.txt /ansible/
-
+#COPY ansible/ /ansible/
+COPY .vault_pass.txt .
+RUN cat .vault_pass.txt > pass
 # Définir le répertoire de travail
+
+COPY requirements.yml .
+
+RUN ansible-galaxy install -r requirements.yml
+
 WORKDIR /ansible
 
-RUN cat .vault_pass.txt > pass
-
+CMD ["tail", "-f", "/dev/null"]
 # Exécuter le playbook Ansible en utilisant l'inventaire par défaut
-CMD ["ansible-playbook", "-i", "inventory", "playbook.yml", "--vault-password-file", "pass"]
+#CMD ["ansible-playbook", "-i", "localhost/hosts", "playbook.yml", "--vault-password-file", "pass"]
